@@ -21,9 +21,16 @@ instalar <- function(paquete) {
     }
 }
 
-paquetes <- c("shiny","plotly","ggplot2")
+paquetes <- c("shiny","plotly","ggplot2","readr","dplyr")
 
 lapply(paquetes, instalar);
+
+
+#Importa la base de datos y crea una submuestra tamaño n
+
+walmart<-read.csv("https://raw.githubusercontent.com/marcoyel21/Walmart_Competition_Mineria/master/train.csv")
+
+walmart<-sample_n(walmart, 3000)
 
 
 walmart_numeric<-walmart %>% select(where(is.numeric)) %>% names()
