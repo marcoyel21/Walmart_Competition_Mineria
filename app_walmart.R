@@ -7,6 +7,12 @@
 #    http://shiny.rstudio.com/
 #
 
+
+
+# NOTA; este archivo supone que hay una base de datos LIMPIA llamada WALMART 
+#y que ya está cargada en memoria. 
+
+
 instalar <- function(paquete) {
     
     if (!require(paquete,character.only = TRUE, quietly = TRUE, warn.conflicts = FALSE)) {
@@ -20,8 +26,8 @@ paquetes <- c("shiny","plotly","ggplot2")
 lapply(paquetes, instalar);
 
 
-autos_numeric<-autos %>% select(where(is.numeric)) %>% names()
-autos_categoric<-autos %>% select(where(is.character) |  where(is.factor)) %>% names()
+walmart_numeric<-walmart %>% select(where(is.numeric)) %>% names()
+walmart_categoric<-walmart %>% select(where(is.character) |  where(is.factor)) %>% names()
 
 
 # Define UI for application that draws a histogram
@@ -34,13 +40,13 @@ ui <- fluidPage(
         sidebarPanel(
             conditionalPanel(condition="input.tabs=='Boxplot'",
                 #Panel para bivariada cat_num
-                selectInput("num_var", "Variable_Numerica",autos_numeric),
-                selectInput("num_cat", "Variable_Categorica", autos_categoric) ),
+                selectInput("num_var", "Variable_Numerica",walmart_numeric),
+                selectInput("num_cat", "Variable_Categorica", walmart_categoric) ),
             
             conditionalPanel(condition="input.tabs=='Scatterplot'",    
                 #Panel para bivariada numerica
-                selectInput("num_var_x", "Variable_Numerica_x",autos_numeric),
-                selectInput("num_var_y", "Variable_Numerica_y", autos_numeric) )
+                selectInput("num_var_x", "Variable_Numerica_x",walmart_numeric),
+                selectInput("num_var_y", "Variable_Numerica_y", walmart_numeric) )
                             
         ),
         
@@ -65,7 +71,7 @@ server <- function(input, output) {
         var_num_y <- input$num_var_y
         
         # draw the scatterplot
-        p <-ggplot(autos,  aes_string(x=var_num_x , y= var_num_y))+
+        p <-ggplot(walmart,  aes_string(x=var_num_x , y= var_num_y))+
             geom_point(colour='aquamarine3',alpha=0.7)+
             geom_smooth(method=lm , color="gray77", se=FALSE)
         
@@ -77,7 +83,7 @@ server <- function(input, output) {
         var_cat <- input$num_cat
         var_num <- input$num_var
             
-    p <-ggplot(autos)+
+    p <-ggplot(walmart)+
             geom_boxplot(mapping=aes_string(x=var_cat , y=var_num), na.rm = TRUE,colour='aquamarine3',fill='royalblue3' )+
             theme(axis.text.x = element_text(angle=90))+
             ggtitle(paste(var_cat, ' y ', var_num)) 
