@@ -216,6 +216,8 @@ Esta variación es esperable dado que suponemos que habrá una relación entre e
 ```{r}
 
 include_graphics('imagenes/trip_type_fineline_number.png')
+
+##
 ```
 
 
