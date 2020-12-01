@@ -9,8 +9,7 @@
 
 
 
-# NOTA; este archivo supone que hay una base de datos LIMPIA llamada WALMART 
-#y que ya está cargada en memoria. 
+
 
 
 instalar <- function(paquete) {
@@ -26,9 +25,8 @@ paquetes <- c("shiny","plotly","ggplot2","readr","dplyr")
 lapply(paquetes, instalar);
 
 
-#Importa la base de datos y crea una submuestra tamaño n
-
-walmart<-read.csv("https://raw.githubusercontent.com/marcoyel21/Walmart_Competition_Mineria/master/train.csv")
+# NOTA; este archivo supone que hay una base de datos LIMPIA llamada WALMART 
+#y que ya está cargada en memoria. 
 
 walmart<-sample_n(walmart, 3000)
 
