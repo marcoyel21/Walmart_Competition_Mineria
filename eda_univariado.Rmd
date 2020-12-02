@@ -26,6 +26,9 @@ library(tidyverse)
 library(readr)
 library(ggthemes)
 library("VIM")
+#install.packages('feather')
+library(feather)
+
 ```
 
 
@@ -166,6 +169,16 @@ heat_cor_numeric_walmart<-ggplot(data = melted_walmart, aes(x=Var1, y=Var2, fill
   theme(axis.text.x = element_text(angle=90))
 
 heat_cor_numeric_walmart
+
+```
+
+
+
+
+Guardamos la base de datos en formato feather para poder cargarla en Python
+```{r}
+write_feather(x=walmart,path='walmart.feather')
+
 
 ```
 
