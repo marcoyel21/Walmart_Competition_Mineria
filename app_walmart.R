@@ -9,8 +9,7 @@
 
 
 
-# NOTA; este archivo supone que hay una base de datos LIMPIA llamada WALMART 
-#y que ya está cargada en memoria. 
+
 
 
 instalar <- function(paquete) {
@@ -21,9 +20,15 @@ instalar <- function(paquete) {
     }
 }
 
-paquetes <- c("shiny","plotly","ggplot2")
+paquetes <- c("shiny","plotly","ggplot2","readr","dplyr")
 
 lapply(paquetes, instalar);
+
+
+# NOTA; este archivo supone que hay una base de datos LIMPIA llamada WALMART 
+#y que ya está cargada en memoria. 
+
+walmart<-sample_n(walmart, 3000)
 
 
 walmart_numeric<-walmart %>% select(where(is.numeric)) %>% names()

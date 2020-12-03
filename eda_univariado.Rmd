@@ -1,19 +1,22 @@
 ---
 title: "Exploratorio_Walmart"
-author: "Santiago"
+author: "Equipo 3"
 date: "11/28/2020"
-output: html_document
+output:
+  pdf_document: default
+  html_document: default
 ---
 
 
-## Cargar funcione de UTILS 
+## Cargar funciones de UTILS 
 
 
 ```{r}
-source("Utils.R", encoding = 'UTF-8')
+source("Utils.R"     , encoding = 'UTF-8')
+source("00-load.R"   , encoding = 'UTF-8')
+source("01-prepare.R", encoding = 'UTF-8')
+source("02-clean.R"  , encoding = 'UTF-8')
 ```
-
-
 
 ## Exploratorio Walmart
 
@@ -22,16 +25,21 @@ source("Utils.R", encoding = 'UTF-8')
 library(tidyverse)
 library(readr)
 library(ggthemes)
+library("VIM")
+#install.packages('feather')
+library(feather)
+
 ```
 
 
 ## Cargamos los datos 
 
 ```{r setup }
-walmart<-load_train()
+# ya está arriba, en load.R
+#walmart<-load_train()
 ```
 
- 
+
 
 ```{r cars}
 glimpse(walmart)
@@ -62,27 +70,26 @@ dim(walmart)
 Entonces se tienen 647 054 observaciones de 7 variables.
  
 Analicemos primero cuales observaciones tienen valores faltantes:
- 
-```{r}
-#apply(walmart, 1, function(x) sum(is.na(x)))
-walmart[rowSums(is.na(walmart)) > 0,]
-```
 ```{r}
 summary(walmart)
 ```
- 
+
+```{r}
+# walmart[rowSums(is.na(walmart)) > 0,]
+rows_with_NAs(walmart)
+```
  y vemos que de las 647 054 observaciones, 4 129 tienen valores faltantes y todas las observaciones con valores faltantes presentan estos faltantes en las columnas UPC y FinelineNumber simultáneamente.
  
 ```{r}
-library("VIM")
-aggr(walmart, prop=TRUE, numbers=TRUE, bars=FALSE)
+#aggr(walmart, prop=TRUE, numbers=TRUE, bars=FALSE)
+prop_missings(walmart)
 ```
  Y observamos que el porcentaje de observaciones con valores faltantes es de 0.064% de las observaciones
 
 Analicemos ahora cuántos valores únicos existen para cada una de las variables.
 
 ```{r}
-sapply(walmart, function(x) length(unique(x)))
+unique_per_col(walmart)
 ```
 
 Y vemos que para tener más de 600 mil observaciones, hay variables que tienen muy pocos valores únicos por lo que algunas de ellas deben de ser variables categóricas.
@@ -90,8 +97,8 @@ Y vemos que para tener más de 600 mil observaciones, hay variables que tienen m
 Observando más detenidamente el dataframe notamos que hay algunos valores en la columna de DepartmentDescription que tienen "NULL" como valor. Puede que esto se trate de un error que se dio al cambiar los datos de formato. Veamos cuantas observaciones presentan este problema:
 
 ```{r}
-#walmart[walmart$DepartmentDescription == 'NULL']
-filter(walmart, walmart$DepartmentDescription == 'NULL')
+#filter(walmart, walmart$DepartmentDescription == 'NULL')
+rows_with_string(walmart, walmart$DepartmentDescription, 'NULL')
 ```
 Y parece que todas las observaciones con "NULL" en la columna de DepartmentDescription pertenecen al conjunto de observaciones que vimos donde tanto UPC como FinelineNumber son nulas.
 
@@ -101,10 +108,44 @@ Finalmente, los nombres de las columnas están bien pero por convención es mejo
 
 Estos tres problemas enteriores se resolveran con la limpieza.
 
+## Limpieza
+
+Primero, pasamos a snake_case los nombres de las columnas y se los asignamos a su variable correspondiente.
+
+```{r}
+walmart_clean_colnames <- clean_colnames(walmart_colnames)
+colnames(walmart) <- walmart_clean_colnames
+```
+
+```{r}
+head(walmart)
+```
+
+Ahora, transformemos los "NULL" de la columna de department_description a NA.
+```{r}
+walmart$department_description <- replace_NULLs(walmart$department_description)
+```
+
+y la proporcion de valores faltantes resulta ahora:
+```{r}
+prop_missings(walmart)
+```
+
+Finalmente, asignemos el tipo de variable correcto a cada una de las columnas.
+```{r}
+walmart <- data_type_conv(walmart)
+```
+
+Checamos que se asignaron correctamente los ipos de datos:
+```{r}
+glimpse(walmart)
+```
+
  
-### Analisis univariado (pendiente)
+## Analisis univariado (pendiente)
  
-# Análisis Bivariado
+ 
+## Análisis Bivariado
 
 
  Correlación de las columnas con la variable de salida: 
@@ -130,3 +171,14 @@ heat_cor_numeric_walmart<-ggplot(data = melted_walmart, aes(x=Var1, y=Var2, fill
 heat_cor_numeric_walmart
 
 ```
+
+
+
+
+Guardamos la base de datos en formato feather para poder cargarla en Python
+```{r}
+write_feather(x=walmart,path='walmart.feather')
+
+
+```
+

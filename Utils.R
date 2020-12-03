@@ -32,6 +32,23 @@ load_train <- function(){
   load
 }
 
+# FUNCIONES PARA EDA
+
+rows_with_NAs <- function(df){
+  df[rowSums(is.na(df)) > 0,]
+}
+
+prop_missings <- function(df){
+  aggr(df, prop=TRUE, numbers=TRUE, bars=FALSE, cex.axis=.8, oma = c(9,2,2,2))
+}
+
+unique_per_col <- function(df){
+  sapply(df, function(x) length(unique(x)))
+}
+
+rows_with_string <- function(df, column, string){
+  filter(df, column == string)
+}
 
 
 
