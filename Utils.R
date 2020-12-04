@@ -32,6 +32,11 @@ load_train <- function(){
   load
 }
 
+load_test <- function(){
+  load<-read_csv("test.csv",col_names=TRUE)
+  load
+}
+
 # FUNCIONES PARA EDA
 
 rows_with_NAs <- function(df){
