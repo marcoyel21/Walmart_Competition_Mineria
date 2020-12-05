@@ -18,7 +18,7 @@ instalar <- function(paquete) {
 paquetes <- c('reshape2','knitr','gridExtra'  ,'lubridate', 'magrittr', 'ggvis', 'dplyr', 'tidyr', 'readr',
               'rvest', 'ggplot2', 'stringr', 'ggthemes', 'googleVis', 'shiny',
               'tibble','vcd', 'vcdExtra', 'GGally', 'readODS', 'readxl', "RSQLite",
-              'patchwork', 'gridExtra', 'grid', 'ggpubr',
+              'patchwork', 'gridExtra', 'grid', 'ggpubr', 'fastDummies',
               'ggExtra', 'purrr', 'forcats', 'ggridges', 'viridis', 
               'visdat', 'VIM', 'mice', 'ggcorrplot', 'MuMIn','tidyverse')
 
@@ -55,7 +55,15 @@ rows_with_string <- function(df, column, string){
   filter(df, column == string)
 }
 
+na_sum <- function(x)
+{
+  if(all(is.na(x))) value <- sum(x,na.rm=F)
+  if(!all(is.na(x))) value <- sum(x,na.rm=T)
+  return(value)
+}
 
+#Creo una función que rehace en dummies las variables 
+dummify<-function(x) {ifelse(x>0,(min(x[x > 0])),0)}
 
 # gráfica para variables numéricas
 graphs_numeric <- function(df, name_num_var, log=FALSE){

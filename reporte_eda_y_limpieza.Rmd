@@ -11,6 +11,8 @@ output:
 # Cargamos paquetes 
 library(tidyverse)
 library(readr)
+#library(index)
+library(fastDummies)
 library(ggthemes)
 library("VIM")
 ```
@@ -157,8 +159,8 @@ Para finalizar el proceso de limpieza y recordando que el proceso de modelado y 
 
 ```{r}
 library(feather)
-write_feather(walmart,"walmart.feather")
-write_feather(walmart_test,"walmart_test.feather")
+write_feather(walmart,"feathers/walmart.feather")
+write_feather(walmart_test,"feathers/walmart_test.feather")
 ```
 
  
@@ -320,6 +322,25 @@ include_graphics('imagenes/trip_type_fineline_number.png')
 ```
 Además, nos gustaría comprender un poco más la clasificación de los trip_types observando de manera más clara las relaciones que existen entre los trip_types y las department_descriptions.
 
- **AQUÍ VA LA GRAFICA DE MARCO**
- 
- **y aquí abajito los nuevos dataframes con las modificaciones que hizo**
+```{r, fig.height=10, fig.width=8, message=FALSE}
+plot_heatmap(walmart)
+```
+
+# Ingeniería de Características
+
+Ahora, hacemos algunas manipulaciones a las columnas originales para facilitar el modelado posterior en python.
+
+En esta primera parte se crean variables dummies a partir de la columna department_description. Aquí además de las variables dummies obtenemos las compras o devoluciones por departamento y una columna donde indica si en esa visita se realizó una devolución o no. Una vez creadas las variables dummies, cambiamos el nivel de análisis, ahora cada observación corresponderá a un viaje a walmart.
+
+Posteriormente, creamos la variable de variedad para después unirla al dataser original, esta variable indica en cuántos diferentes departamentos se realizó alguna compra o devolución por visita. Una vez que tenemos nuestra nueva columna de variedad, podemos agregarla al dataset original.
+
+```{r}
+source("04-to-wider.R"    , encoding = 'UTF-8')
+```
+
+Nuevamente, recordando que el modelado se hará en python, se pasan los datos a un formato feather.
+
+```{r}
+write_feather(walmart,"feathers/walmart_wider.feather")
+```
+
