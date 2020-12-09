@@ -20,7 +20,7 @@ paquetes <- c('reshape2','knitr','gridExtra'  ,'lubridate', 'magrittr', 'ggvis',
               'tibble','vcd', 'vcdExtra', 'GGally', 'readODS', 'readxl', "RSQLite",
               'patchwork', 'gridExtra', 'grid', 'ggpubr', 'fastDummies',
               'ggExtra', 'purrr', 'forcats', 'ggridges', 'viridis', 
-              'visdat', 'VIM', 'mice', 'ggcorrplot', 'MuMIn','tidyverse')
+              'visdat', 'VIM', 'mice', 'ggcorrplot', 'MuMIn','tidyverse','feather','tibble')
 
 
 lapply(paquetes, instalar);
