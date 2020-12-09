@@ -8,14 +8,15 @@ source("03-eda.R"  , encoding = 'UTF-8')
 # PASO I: Adecuo la estructura
 
 #importo los datos (MODIFICAR PARA DATOS LIMPIOS)
+sample_submission<-read.csv("sample_submission.csv")
 
 #Creo una versión auxiliar y una de trabajo
 walmart$TripType<-as.character(walmart$TripType)
-walmart_aux_train <- walmart[complete.cases(walmart), ] 
-walmart_aux_test <- walmart_test[complete.cases(walmart_test), ] 
+walmart_aux_train <- walmart
+walmart_aux_test <- walmart_test
 
-walmart_train<-walmart[complete.cases(walmart), ] 
-walmart_test<-walmart_test[complete.cases(walmart_test), ] 
+walmart_train<-walmart
+walmart_test<-walmart_test
 
 #Expando dummies (bien podríamos usar otra columna, aquí se decidió usar DeparmentDescription)
 walmart_train <- fastDummies::dummy_cols(walmart_train, select_columns = "DepartmentDescription")
@@ -23,11 +24,11 @@ walmart_test <- fastDummies::dummy_cols(walmart_test, select_columns = "Departme
 
 
 # Sumo todas las compras por departamento (multiplicando scan_count por las dummies)
-for (i in 8:75) {
+for (i in 8:76) {
   walmart_train[i]<-walmart_train[5]*walmart_train[i]
 }
 
-for (i in 7:73) {
+for (i in 7:74) {
   walmart_test[i]<-walmart_test[4]*walmart_test[i]
 }
 
@@ -115,8 +116,6 @@ walmart_wide_train <- fastDummies::dummy_cols(walmart_wide_train, select_columns
 walmart_wide_test <- fastDummies::dummy_cols(walmart_wide_test, select_columns = "Weekday")
 walmart_wide_train$Weekday<-NULL
 walmart_wide_test$Weekday<-NULL
-walmart_wide_test$VisitNumber<-NULL
-walmart_wide_train$VisitNumber<-NULL
 
 # Escribo los feather final
 
