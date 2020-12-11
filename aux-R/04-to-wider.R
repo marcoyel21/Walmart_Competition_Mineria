@@ -8,19 +8,20 @@ source("03-eda.R"  , encoding = 'UTF-8')
 # PASO I: Adecuo la estructura
 
 #importo los datos (MODIFICAR PARA DATOS LIMPIOS)
-sample_submission<-read.csv("sample_submission.csv")
 
 #Creo una versión auxiliar y una de trabajo
 walmart$TripType<-as.character(walmart$TripType)
-walmart_aux_train <- walmart
-walmart_aux_test <- walmart_test
 
-walmart_train<-walmart
-walmart_test<-walmart_test
+walmart_aux_train <- read_feather("walmart.feather")
+walmart_aux_test <- read_feather("walmart_test.feather")
+
+
+walmart_train<-read_feather("walmart.feather")
+walmart_test<-read_feather("walmart_test.feather")
 
 #Expando dummies (bien podríamos usar otra columna, aquí se decidió usar DeparmentDescription)
-walmart_train <- fastDummies::dummy_cols(walmart_train, select_columns = "DepartmentDescription")
-walmart_test <- fastDummies::dummy_cols(walmart_test, select_columns = "DepartmentDescription")
+walmart_train <- fastDummies::dummy_cols(walmart_train, select_columns = "department_description")
+walmart_test <- fastDummies::dummy_cols(walmart_test, select_columns = "department_description")
 
 
 # Sumo todas las compras por departamento (multiplicando scan_count por las dummies)
@@ -34,31 +35,31 @@ for (i in 7:74) {
 
 
 #Finalmente, agrego una dummy de si hubo retorno
-walmart_train<-walmart_train %>% mutate (regreso=ifelse(ScanCount<0,1,0))
-walmart_test<-walmart_test %>% mutate (regreso=ifelse(ScanCount<0,1,0))
+walmart_train<-walmart_train %>% mutate (regreso=ifelse(scan_count<0,1,0))
+walmart_test<-walmart_test %>% mutate (regreso=ifelse(scan_count<0,1,0))
 
 
 #Paso II: cambio el nivel de análisis: ahora cada observación será cada viaje y no cada producto
 # Elimino las columnas que no podré agrupar
-walmart_train$FinelineNumber<-NULL
-walmart_train$DepartmentDescription<-NULL
-walmart_train$ScanCount<-NULL
-walmart_train$Upc<-NULL
+walmart_train$fineline_number<-NULL
+walmart_train$department_description<-NULL
+walmart_train$scan_count<-NULL
+walmart_train$upc<-NULL
 
-walmart_test$FinelineNumber<-NULL
-walmart_test$DepartmentDescription<-NULL
-walmart_test$ScanCount<-NULL
-walmart_test$Upc<-NULL
+walmart_test$fineline_number<-NULL
+walmart_test$department_description<-NULL
+walmart_test$scan_count<-NULL
+walmart_test$upc<-NULL
 
 # Agrupo por visit_number(que es la de jerarquía más alta); 
 # trip_type y weekday solo las agrupo para que no se sumen o "colapsen":
 # El resto (las dummies) se suman o "colapsan"
 walmart_train<-walmart_train %>% 
-  group_by(VisitNumber, TripType,Weekday) %>%
+  group_by(visit_number, trip_type,weekday) %>%
   summarise_each(funs(sum)) 
 
 walmart_test<-walmart_test %>% 
-  group_by(VisitNumber,Weekday) %>%
+  group_by(visit_number,weekday) %>%
   summarise_each(funs(sum)) 
 
 
@@ -75,29 +76,29 @@ walmart_test<-walmart_test %>% mutate(regreso=ifelse(regreso>0,1,0))
 # Este paso se crea en una base de datos auxiliar que  una vez extraida la columna creada,  no necesitaré más
 
 #Expando dummies
-walmart_aux_train <- fastDummies::dummy_cols(walmart_aux_train, select_columns = "DepartmentDescription")
-walmart_aux_test <- fastDummies::dummy_cols(walmart_aux_test, select_columns = "DepartmentDescription")
+walmart_aux_train <- fastDummies::dummy_cols(walmart_aux_train, select_columns = "department_description")
+walmart_aux_test <- fastDummies::dummy_cols(walmart_aux_test, select_columns = "department_description")
 
 #Elimino columnas inagrupables
-walmart_aux_train$FinelineNumber<-NULL
-walmart_aux_train$DepartmentDescription<-NULL
-walmart_aux_train$ScanCount<-NULL
-walmart_aux_train$Upc<-NULL
+walmart_aux_train$fineline_number<-NULL
+walmart_aux_train$department_description<-NULL
+walmart_aux_train$scan_count<-NULL
+walmart_aux_train$upc<-NULL
 
-walmart_aux_test$FinelineNumber<-NULL
-walmart_aux_test$DepartmentDescription<-NULL
-walmart_aux_test$ScanCount<-NULL
-walmart_aux_test$Upc<-NULL
+walmart_aux_test$fineline_number<-NULL
+walmart_aux_test$department_description<-NULL
+walmart_aux_test$scan_count<-NULL
+walmart_aux_test$upc<-NULL
 
 
 # Agrupo:
 
 walmart_aux_train<-walmart_aux_train %>% 
-  group_by(VisitNumber, TripType,Weekday) %>%
+  group_by(visit_number,trip_type,weekday) %>%
   summarise_each(funs(sum)) 
 
 walmart_aux_test<-walmart_aux_test %>% 
-  group_by(VisitNumber,Weekday) %>%
+  group_by(visit_number,weekday) %>%
   summarise_each(funs(sum)) 
 
 
@@ -108,14 +109,14 @@ walmart_aux_test<-walmart_aux_test %>%
 walmart_wide_train<-cbind.data.frame(walmart_train, (data.frame(variedad = apply(walmart_aux_train[4:71], 1, sum))))
 walmart_wide_test<-cbind.data.frame(walmart_test, (data.frame(variedad = apply(walmart_aux_test[3:69], 1, sum))))
 
-walmart_wide_test<-add_column(walmart_wide_test, "DepartmentDescription_HEALTH AND BEAUTY AIDS" = 0, .after = "DepartmentDescription_HARDWARE")
+walmart_wide_test<-add_column(walmart_wide_test, "department_description_HEALTH AND BEAUTY AIDS" = 0, .after = "department_description_HARDWARE")
 
 # Finalmente obtengo las dummies de los días de la semana
 
-walmart_wide_train <- fastDummies::dummy_cols(walmart_wide_train, select_columns = "Weekday")
-walmart_wide_test <- fastDummies::dummy_cols(walmart_wide_test, select_columns = "Weekday")
-walmart_wide_train$Weekday<-NULL
-walmart_wide_test$Weekday<-NULL
+walmart_wide_train <- fastDummies::dummy_cols(walmart_wide_train, select_columns = "weekday")
+walmart_wide_test <- fastDummies::dummy_cols(walmart_wide_test, select_columns = "weekday")
+walmart_wide_train$weekday<-NULL
+walmart_wide_test$weekday<-NULL
 
 # Escribo los feather final
 
