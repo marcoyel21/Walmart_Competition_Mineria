@@ -19,11 +19,11 @@ library("VIM")
 
 ```{r}
 # Cargamos las funciones necasarias para la limpieza y el EDA
-source("Utils.R"     , encoding = 'UTF-8')
-source("00-load.R"   , encoding = 'UTF-8')
-source("01-prepare.R", encoding = 'UTF-8')
-source("02-clean.R"  , encoding = 'UTF-8')
-source("03-eda.R"    , encoding = 'UTF-8')
+source("aux-R/Utils.R"     , encoding = 'UTF-8')
+source("aux-R/00-load.R"   , encoding = 'UTF-8')
+source("aux-R/01-prepare.R", encoding = 'UTF-8')
+source("aux-R/02-clean.R"  , encoding = 'UTF-8')
+source("aux-R/03-eda.R"    , encoding = 'UTF-8')
 ```
 
 Una vez cargados los datos, se hace un primer análisis para detectar errores de carga o de lectura para después continuar el análisis gráfico.
@@ -142,12 +142,22 @@ Checamos que se asignaron correctamente los tipos de datos:
 glimpse(walmart)
 ```
 
+Por otra, analizando más de cerca la columna de department_description, notamos que hay un departamento con dos nombres "MENS WEAR" y "MENSWEAR", unifiquemos estos nombres.
+
+```{r}
+walmart <- walmart %>%
+  mutate(department_description = str_replace(department_description, "MENS WEAR", "MENSWEAR"))
+```
+
 Y aplicamos este mismo proceso de limpieza al conjunto de prueba.
 
 ```{r}
 colnames(walmart_test) <- colnames(walmart_test) %>% clean_colnames()
 walmart_test$department_description <- replace_NULLs(walmart_test$department_description)
 walmart_test <- data_type_conv(walmart_test)
+
+walmart_test <- walmart_test %>%
+  mutate(department_description = str_replace(department_description, "MENS WEAR", "MENSWEAR"))
 ```
 
 Checamos el resultado:
@@ -326,11 +336,20 @@ Además, nos gustaría comprender un poco más la clasificación de los trip_typ
 plot_heatmap(walmart)
 ```
 
+#Imputación
+Como vimos antes la mayoría de las observaciones que contienen NAs en fineline_number y en upc, corresponden a compras realizadas en el departamento de PHARMACY RX, por lo que para las observaciones que presentan NAs en la columna de department_description se realizará la imputación de este valor. Tanto en el conjunto de entrenamiento como en el de prueba.
+
+```{r}
+walmart["department_description"][is.na(walmart["department_description"])] <- 'PHARMACY RX'
+walmart_test["department_description"][is.na(walmart_test["department_description"])] <- 'PHARMACY RX'
+```
+
+
 # Ingeniería de Características
 
 Ahora, hacemos algunas manipulaciones a las columnas originales para facilitar el modelado posterior en python.
 
-En esta primera parte se crean variables dummies a partir de la columna department_description. Aquí además de las variables dummies obtenemos las compras o devoluciones por departamento y una columna donde indica si en esa visita se realizó una devolución o no. Una vez creadas las variables dummies, cambiamos el nivel de análisis, ahora cada observación corresponderá a un viaje a walmart.
+En esta primera parte se crean variables dummies a partir de la columna department_description. Aquí además de las variables dummies creamos las variables de compras o devoluciones por departamento y una columna donde indica si en esa visita se realizó una devolución o no. También creamos una variable donde se indica la cantidad total de productos que se compraron. Al crear estas variables, cambiamos el nivel de análisis, ahora cada observación corresponderá a un viaje a walmart, haciendo un data frame en versión wide.
 
 Posteriormente, creamos la variable de variedad para después unirla al dataser original, esta variable indica en cuántos diferentes departamentos se realizó alguna compra o devolución por visita. Una vez que tenemos nuestra nueva columna de variedad, podemos agregarla al dataset original.
 
