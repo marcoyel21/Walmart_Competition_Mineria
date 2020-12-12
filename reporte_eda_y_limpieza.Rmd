@@ -165,14 +165,6 @@ Checamos el resultado:
 head(walmart_test)
 ```
 
-Para finalizar el proceso de limpieza y recordando que el proceso de modelado y selección de modelos se realizará en python, se escriben archivos feather con nuestros data sets limpios.
-
-```{r}
-library(feather)
-write_feather(walmart,"feathers/walmart.feather")
-write_feather(walmart_test,"feathers/walmart_test.feather")
-```
-
  
 ## EDA univariado
 Separemos las variables por categóricas y numéricas, pues los análisis gráficos de cada tipo de variable es diferente.
@@ -342,6 +334,14 @@ Como vimos antes la mayoría de las observaciones que contienen NAs en fineline_
 ```{r}
 walmart["department_description"][is.na(walmart["department_description"])] <- 'PHARMACY RX'
 walmart_test["department_description"][is.na(walmart_test["department_description"])] <- 'PHARMACY RX'
+```
+
+Para finalizar el proceso de limpieza y recordando que el proceso de modelado y selección de modelos se realizará en python, se escriben archivos feather con nuestros data sets limpios.
+
+```{r}
+library(feather)
+write_feather(walmart,"feathers/walmart.feather")
+write_feather(walmart_test,"feathers/walmart_test.feather")
 ```
 
 
