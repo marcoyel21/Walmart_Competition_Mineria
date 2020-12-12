@@ -10,8 +10,6 @@ source("03-eda.R"  , encoding = 'UTF-8')
 #importo los datos (MODIFICAR PARA DATOS LIMPIOS)
 
 #Creo una versión auxiliar y una de trabajo
-walmart$TripType<-as.character(walmart$TripType)
-
 walmart_aux_train <- read_feather("walmart.feather")
 walmart_aux_test <- read_feather("walmart_test.feather")
 
@@ -25,11 +23,11 @@ walmart_test <- fastDummies::dummy_cols(walmart_test, select_columns = "departme
 
 
 # Sumo todas las compras por departamento (multiplicando scan_count por las dummies)
-for (i in 8:76) {
+for (i in 8:74) {
   walmart_train[i]<-walmart_train[5]*walmart_train[i]
 }
 
-for (i in 7:74) {
+for (i in 7:72) {
   walmart_test[i]<-walmart_test[4]*walmart_test[i]
 }
 
@@ -43,12 +41,10 @@ walmart_test<-walmart_test %>% mutate (regreso=ifelse(scan_count<0,1,0))
 # Elimino las columnas que no podré agrupar
 walmart_train$fineline_number<-NULL
 walmart_train$department_description<-NULL
-walmart_train$scan_count<-NULL
 walmart_train$upc<-NULL
 
 walmart_test$fineline_number<-NULL
 walmart_test$department_description<-NULL
-walmart_test$scan_count<-NULL
 walmart_test$upc<-NULL
 
 # Agrupo por visit_number(que es la de jerarquía más alta); 
@@ -56,11 +52,11 @@ walmart_test$upc<-NULL
 # El resto (las dummies) se suman o "colapsan"
 walmart_train<-walmart_train %>% 
   group_by(visit_number, trip_type,weekday) %>%
-  summarise_each(funs(sum)) 
+  summarise_each(funs(sum(., na.rm = TRUE))) 
 
 walmart_test<-walmart_test %>% 
   group_by(visit_number,weekday) %>%
-  summarise_each(funs(sum)) 
+  summarise_each(funs(sum(., na.rm = TRUE))) 
 
 
 # Como también se sumo ("colapsó) la dummy de regreso, simplemente la convierto a dummy otra vez.
@@ -95,19 +91,19 @@ walmart_aux_test$upc<-NULL
 
 walmart_aux_train<-walmart_aux_train %>% 
   group_by(visit_number,trip_type,weekday) %>%
-  summarise_each(funs(sum)) 
+  summarise_each(funs(sum(., na.rm = TRUE))) 
 
 walmart_aux_test<-walmart_aux_test %>% 
   group_by(visit_number,weekday) %>%
-  summarise_each(funs(sum)) 
+  summarise_each(funs(sum(., na.rm = TRUE))) 
 
 
 #Finalmente creo mi columna de variedad sumando todas las dummies por fila
 
 #PASO FINAL: JUNTO TODO en walmart_wide
 
-walmart_wide_train<-cbind.data.frame(walmart_train, (data.frame(variedad = apply(walmart_aux_train[4:71], 1, sum))))
-walmart_wide_test<-cbind.data.frame(walmart_test, (data.frame(variedad = apply(walmart_aux_test[3:69], 1, sum))))
+walmart_wide_train<-cbind.data.frame(walmart_train, (data.frame(variedad = apply(walmart_aux_train[4:70], 1, sum))))
+walmart_wide_test<-cbind.data.frame(walmart_test, (data.frame(variedad = apply(walmart_aux_test[3:68], 1, sum))))
 
 walmart_wide_test<-add_column(walmart_wide_test, "department_description_HEALTH AND BEAUTY AIDS" = 0, .after = "department_description_HARDWARE")
 
@@ -117,6 +113,7 @@ walmart_wide_train <- fastDummies::dummy_cols(walmart_wide_train, select_columns
 walmart_wide_test <- fastDummies::dummy_cols(walmart_wide_test, select_columns = "weekday")
 walmart_wide_train$weekday<-NULL
 walmart_wide_test$weekday<-NULL
+
 
 # Escribo los feather final
 
