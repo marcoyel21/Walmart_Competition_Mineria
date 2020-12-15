@@ -176,10 +176,6 @@ form {
 <br>
 <div class="result" align="center">
     {% if result %}
-        {% for variable, value in original_input.items() %}
-            <b>{{ variable }}</b> : {{ value }}
-        {% endfor %}
-        <br>
         <br> Pertenece a categoría:
         <p style="font-size:50px">{{ result }}</p>
     {% endif %}
