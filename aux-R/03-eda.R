@@ -11,19 +11,19 @@ select_categoric <- function(df){
 # UNIVARIADO
 
 plot_boxplot <- function(df){
-  df %>% stack() %>% drop_na(values) %>% ggplot(aes(x = ind, y = values)) +
+  df %>% stack() %>% drop_na(values) %>% ggplot(aes(x = ind, y = as.numeric(values))) +
     geom_boxplot() + theme_light() + theme_light() +
     facet_wrap(~ind, scale="free")
 }
 
 plot_density <- function(df){
-  df %>% stack() %>% drop_na(values) %>% ggplot(aes(x = values)) +
+  df %>% stack() %>% drop_na(values) %>% ggplot(aes(x = as.numeric(values))) +
     geom_density() + theme_light() +
     facet_wrap(~ind, scale="free")
 }
 
 plot_histogram <- function(df){
-  df %>% stack() %>% drop_na(values) %>% ggplot(aes(x = values)) +
+  df %>% stack() %>% drop_na(values) %>% ggplot(aes(x = as.numeric(values))) +
     geom_histogram(bins = 30) + theme_light() +
     facet_wrap(~ind, scale="free")
 }

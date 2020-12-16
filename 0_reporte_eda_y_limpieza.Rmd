@@ -227,17 +227,22 @@ names(sort(summary(walmart$fineline_number), decreasing=T)[1:25])
 Recordemos que tenemos varias observaciones incompletas a las cuales les faltan dos o tres variables. Nos gustaría analizar más de cerca estas observaciones y ver si se comportan de la misma manera que las demás o si tienen alguna característica que las diferencie además de la incompletez.
 
 Para las variables numéricas:
-```{r}
+```{r, message=FALSE, warning=FALSE}
 walmart_NA <- rows_with_NAs(walmart)
 
-plot_boxplot(walmart_NA)
+#plot_boxplot(walmart_NA)
+
+walmart_NA %>% stack() %>% drop_na(values) %>% ggplot(aes(x = ind, y = as.numeric(values))) +
+    geom_boxplot() + theme_light() + theme_light() +
+    facet_wrap(~ind, scale="free")
 ```
 Ahora sabemos que el número de productos comprados o devueltos en las observaciones con valores faltantes van de 0 a 6.
 
-```{r}
+```{r, message=FALSE, warning=FALSE}
 plot_density(walmart_NA)
 ```
-```{r}
+
+```{r, message=FALSE, warning=FALSE}
 plot_histogram(walmart_NA)
 ```
 
@@ -354,12 +359,12 @@ En esta primera parte se crean variables dummies a partir de la columna departme
 Posteriormente, creamos la variable de variedad para después unirla al dataser original, esta variable indica en cuántos diferentes departamentos se realizó alguna compra o devolución por visita. Una vez que tenemos nuestra nueva columna de variedad, podemos agregarla al dataset original.
 
 ```{r}
-source("04-to-wider.R"    , encoding = 'UTF-8')
+#source("aux-R/04-to-wider.R"    , encoding = 'UTF-8')
 ```
 
 Nuevamente, recordando que el modelado se hará en python, se pasan los datos a un formato feather.
 
 ```{r}
-write_feather(walmart,"feathers/walmart_wider.feather")
+#write_feather(walmart,"feathers/walmart_wider.feather")
 ```
 
