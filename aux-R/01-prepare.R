@@ -1,0 +1,1 @@
+walmart_colnames <- colnames(walmart)

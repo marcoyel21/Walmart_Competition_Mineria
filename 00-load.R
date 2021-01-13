@@ -1,1 +1,0 @@
-walmart <- load_train()

@@ -1,0 +1,191 @@
+<!doctype html>
+<html>
+<style>
+form {
+    margin: auto;
+    width: 35%;
+}
+
+.result {
+    margin: auto;
+    width: 35%;
+    border: 1px solid #ccc;
+}
+</style>
+
+<head>
+    <title>Tus compras en Walmart</title>
+</head>
+<form action="{{ url_for('main') }}" method="POST">
+    <fieldset>
+        <legend>Cuentanos sobre viaje:</legend>
+        Cantidad de departamentos diferentes:
+        <input name="variedad" type="number" required>
+        <br>
+        <br> Total de productos:
+        <input name="scan_count" type="number" required>
+        <br>
+        <br> ¿Regresó al menos un produco? :
+        <input name="regreso" type="number" required>
+        <input type="submit">
+    </fieldset>
+        <fieldset>
+        <legend>Selecciona con un 1 el día de la semana en el que acudió:</legend>
+        Lunes:
+        <input name="weekday_Monday" type="number" required>
+        <br>
+        <br> Martes:
+        <input name="weekday_Tuesday" type="number" required>
+        <br>
+        <br> Miércoles:
+        <input name="weekday_Wednesday" type="number" required>
+        <br>
+        <br> Jueves:
+        <input name="weekday_Thursday" type="number" required>
+        <br>
+        <br> Viernes:
+        <input name="weekday_Friday" type="number" required>
+        <br>
+        <br> Sábado:
+        <input name="weekday_Saturday" type="number" required>
+        <br>
+        <br> Domingo:
+        <input name="weekday_Sunday" type="number" required>
+           <input type="submit">
+    </fieldset>
+    <fieldset>
+        <legend> ¿Cuantos productos compraste en cada departamento?:</legend>
+        <br>
+        <br> Abarrotes:
+        <input name="department_description_DSD GROCERY" type="number" required>
+        <br>
+        <br> Servicios Financieros:
+        <input name="department_description_FINANCIAL SERVICES" type="number" required>
+        <br>
+        <br> Higiene personal:
+        <input name="department_description_PERSONAL CARE" type="number" required>
+        <br>
+        <br> Farmacia OTC:
+        <input name="department_description_PHARMACY OTC" type="number" required>
+        <br>
+        <br> Abarrotes Secos:
+        <input name="department_description_GROCERY DRY GOODS" type="number" required>
+        <br>
+        <br> Frutas y Verduras:
+        <input name="department_description_PRODUCE" type="number" required>
+        <br>
+        <br> Lacteos:
+        <input name="department_description_DAIRY" type="number" required>
+        <br>
+        <br> Deli:
+        <input name="department_description_SERVICE DELI" type="number" required>
+        <br>
+        <br> Mercancía antes de pagar:
+        <input name="department_description_IMPULSE MERCHANDISE" type="number" required>
+        <br>
+        <br> Ropa de caballero:
+        <input name="department_description_MENSWEAR" type="number" required>
+        <br>
+        <br> Quimicos del hogar:
+        <input name="department_description_HOUSEHOLD CHEMICALS/SUPP" type="number" required>
+        <br>
+        <br> Farmacia RX:
+        <input name="department_description_PHARMACY RX" type="number" required>
+        <br>
+        <br> Bienes para el bebe:
+        <input name="department_description_INFANT CONSUMABLE HARDLINES" type="number" required>
+        <br>
+        <br> Articulos de belleza:
+        <input name="department_description_BEAUTY" type="number" required>
+        <br>
+        <br> Comida congelada:
+        <input name="department_description_FROZEN FOODS" type="number" required>
+        <br>
+        <br> Bienes de papelería:
+        <input name="department_description_HOUSEHOLD PAPER GOODS" type="number" required>
+        <br>
+        <br> Panaderia:
+        <input name="department_description_COMM BREAD" type="number" required>
+        <br>
+        <br> Dulces, galletas y tabaco:
+        <input name="department_description_CANDY, TOBACCO, COOKIES" type="number" required>
+        <br>
+        <br> Carnes:
+        <input name="department_description_MEAT - FRESH & FROZEN" type="number" required>
+        <br>
+        <br> Ropa para dama:
+        <input name="department_description_LADIESWEAR" type="number" required>
+        <br>
+        <br> Articulos de mascotas:
+        <input name="department_description_PETS AND SUPPLIES" type="number" required>
+        <br>
+        <br> Articulos de fiesta:
+        <input name="department_description_CELEBRATION" type="number" required>
+        <br>
+        <br> Articulos para vehículos:
+        <input name="department_description_AUTOMOTIVE" type="number" required>
+        <br>
+        <br> Zapatería:
+        <input name="department_description_SHOES" type="number" required>
+        <br>
+        <br> Vinos y licores:
+        <input name="department_description_LIQUOR,WINE,BEER" type="number" required>
+        <br>
+        <br> Productos para el hogar:
+        <input name="department_description_HOME MANAGEMENT" type="number" required>
+        <br>
+        <br> Abarrotes de lujo:
+        <input name="department_description_COOK AND DINE" type="number" required>
+        <br>
+        <br> Articulos de oficina:
+        <input name="department_description_OFFICE SUPPLIES" type="number" required>
+        <br>
+        <br> Cantidad de juguetes:
+        <input name="department_description_TOYS" type="number" required>
+        <br>
+        <br> Pasteleria:
+        <input name="department_description_BAKERY" type="number" required>
+        <br>
+        <br> Articulos de deportes:
+        <input name="department_description_SPORTING GOODS" type="number" required>
+        <br>
+        <br> Articulos de jardiería:
+        <input name="department_description_LAWN AND GARDEN" type="number" required>
+        <br>
+        <br> HARDWARE:
+        <input name="department_description_HARDWARE" type="number" required>
+        <br>
+        <br> Electrónica:
+        <input name="department_description_ELECTRONICS" type="number" required>
+        <br>
+        <br> Deli empaquetado:
+        <input name="department_description_PRE PACKED DELI" type="number" required>
+        <br>
+        <br> Decoracion para el hogar:
+        <input name="department_description_HOME DECOR" type="number" required>
+        <br>
+        <br>WIRELESS:
+        <input name="department_description_WIRELESS" type="number" required>
+        <br>
+        <br> Artesanias:
+        <input name="department_description_FABRICS AND CRAFTS" type="number" required>
+        <br>
+        <br> Ropa para niños:
+        <input name="department_description_INFANT APPAREL" type="number" required>
+        <br>
+        <br> Articulos para baño:
+        <input name="department_description_BATH AND SHOWER" type="number" required>
+        <br>
+        <br>
+        <input type="submit">
+    </fieldset>
+</form>
+<br>
+<div class="result" align="center">
+    {% if result %}
+        <br> Pertenece a categoría:
+        <p style="font-size:50px">{{ result }}</p>
+    {% endif %}
+</div>
+
+</html>
